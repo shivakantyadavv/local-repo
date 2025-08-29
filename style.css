@@ -1,7 +1,34 @@
-p {
-    margin: 1rem 0;
-    background-color: #10976a;
-    text-align: center;
-    color: white;
-    border: 4px solid black;
+
+
+/* Position the navbar container inside the image */
+.container {
+  position: absolute;
+  margin: 20px;
+  width: auto;
 }
+
+/* The navbar */
+.topnav {
+  overflow: hidden;
+  background-color: #141414;
+}
+
+/* Navbar links */
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 20px;
+}
+
+.topnav a:hover {
+  background-color: #df0000;
+  color: black;
+}
+
+
+
+
+
