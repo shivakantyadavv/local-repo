@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Token Details</title>
+  <meta name="description" content="Read-only token record with metadata and history" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0c1224; --panel:#131a33; --ink:#e8ecf6; --muted:#9fafc6; --line:#212a49;
+      --accent:#6aa9ff; --success:#18c79c; --warn:#ffcc66; --danger:#ff7b7b; --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{margin:0; background:linear-gradient(180deg,#0c1224,#0f1430); color:var(--ink); font:15px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    a{color:var(--accent); text-decoration:none}
+    .layout{display:grid; grid-template-columns: 260px 1fr; min-height:100svh}
+    .sidebar{border-right:1px solid var(--line); background:linear-gradient(180deg,#0f1430,#0b1020 60%); padding:18px 14px; position:sticky; top:0; height:100svh}
+    .brand{display:flex; align-items:center; gap:10px; padding:8px 10px; margin-bottom:10px}
+    .logo{width:34px; height:34px; border-radius:8px; background: radial-gradient(100% 100% at 30% 20%, #6aa9ff 0%, #7b7cf2 60%, #9a6bff 100%); box-shadow:0 6px 18px rgba(122,140,255,.45)}
+    .brand h1{font-size:16px; margin:0}
+    .nav{margin-top:12px}
+    .nav h2{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:18px 10px 8px}
+    .nav a{display:flex; align-items:center; gap:10px; padding:10px 12px; margin:2px 4px; border-radius:10px; color:var(--ink); border:1px solid transparent}
+    .nav a.active,.nav a:hover{background:rgba(122,140,255,.08); border-color:rgba(122,140,255,.25)}
+    .sidebar .footer{position:absolute; bottom:10px; left:14px; right:14px; color:var(--muted); font-size:12px}
+
+    .main{display:flex; flex-direction:column; min-width:0}
+    .topbar{display:flex; align-items:center; gap:14px; padding:12px 16px; border-bottom:1px solid var(--line); background:rgba(19,26,51,.6); backdrop-filter: blur(6px); position:sticky; top:0; z-index:5}
+    .search{flex:1; display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:8px 10px}
+    .search input{flex:1; border:0; outline:0; background:transparent; color:var(--ink)}
+    .user{display:flex; align-items:center; gap:10px}
+    .avatar{width:32px; height:32px; border-radius:999px; background:#8aa1ff}
+    .content{padding:18px; max-width:1200px}
+
+    .crumbs{font-size:13px; color:var(--muted); margin-bottom:12px}
+    .crumbs a{color:var(--muted)}
+    .page-title{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:8px 0 16px}
+    .page-title h2{margin:0; font-size:20px}
+    .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 12px; border-radius:10px; border:1px solid var(--line); color:var(--ink); background:var(--panel)}
+    .btn.primary{background:linear-gradient(90deg,#6aa9ff,#7b7cf2); color:#0f1430; border-color:transparent; font-weight:700}
+    .btn.success{background:rgba(24,199,156,.18); border-color:rgba(24,199,156,.4)}
+    .btn.danger{background:rgba(255,123,123,.15); border-color:rgba(255,123,123,.35)}
+    .btn.warn{background:rgba(255,204,102,.15); border-color:rgba(255,204,102,.35)}
+
+    .grid{display:grid; grid-template-columns: 2fr 1fr; gap:16px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)); border:1px solid var(--line); border-radius:14px; box-shadow: var(--shadow)}
+    .card .hd{padding:14px 14px 0}
+    .card .bd{padding:12px 14px 16px}
+    .muted{color:var(--muted)}
+    .divider{border-top:1px solid var(--line); margin:10px 0}
+
+    .kv{width:100%; border-collapse:collapse; font-size:14px}
+    .kv th,.kv td{border-bottom:1px solid var(--line); padding:10px 6px; text-align:left; vertical-align:top}
+    .kv th{width:220px; color:var(--muted); font-weight:500}
+    .badge{display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid transparent}
+    .badge.success{background:rgba(24,199,156,.15); border-color:rgba(24,199,156,.35); color:#6deccf}
+    .badge.warn{background:rgba(255,204,102,.12); border-color:rgba(255,204,102,.3); color:#ffd58a}
+    .badge.danger{background:rgba(255,123,123,.12); border-color:rgba(255,123,123,.3); color:#ff9a9a}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:13px}
+
+    table.tbl{width:100%; border-collapse:collapse; font-size:14px}
+    .tbl th,.tbl td{border-bottom:1px solid var(--line); padding:10px 8px; text-align:left}
+    .tbl th{color:var(--muted); font-weight:600}
+    .tbl tr:hover{background:rgba(122,140,255,.06)}
+    .right{display:flex; gap:8px; flex-wrap:wrap}
+
+    @media (max-width:1080px){.layout{grid-template-columns: 72px 1fr} .brand h1,.nav h2,.nav a span{display:none}}
+    @media (max-width:900px){.grid{grid-template-columns: 1fr}}
+    @media (max-width:640px){.kv th{width:140px} .page-title{flex-direction:column; align-items:flex-start} .right{width:100%}}
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <h1>Admin</h1>
+      </div>
+      <nav class="nav">
+        <h2>Navigation</h2>
+        <a class="active" href="index.html"><span>Dashboard</span></a>
+        <a href="#"><span>Tokens</span></a>
+        <a href="#"><span>Wallets</span></a>
+        <a href="#"><span>Transactions</span></a>
+        <a href="#"><span>Users</span></a>
+        <a href="#"><span>Settings</span></a>
+      </nav>
+      <div class="footer">© 2025 Admin Console</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="#88a0d9" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <input type="search" placeholder="Search tokens, users, wallets..." />
+        </div>
+        <div class="user">
+          <span class="muted">admin@example.com</span>
+          <div class="avatar" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="crumbs"><a href="#">Admin</a> / <a href="#">Tokens</a> / Token Details</div>
+        <div class="page-title">
+          <h2>Token Details</h2>
+          <div class="right">
+            <button class="btn">Back</button>
+            <button class="btn success" id="approveBtn">Approve</button>
+            <button class="btn danger" id="rejectBtn">Reject</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <!-- Token details -->
+          <section class="card">
+            <div class="hd">
+              <h3 style="margin:0 0 8px">Overview</h3>
+              <p class="muted" style="margin:0">Read‑only properties for the selected token.</p>
+            </div>
+            <div class="bd">
+              <table class="kv">
+                <tr><th>Token ID</th><td class="mono" id="tokenId">29589143</td></tr>
+                <tr><th>Status</th><td><span class="badge success" id="statusBadge">Active</span></td></tr>
+                <tr><th>Name</th><td>Promise Token</td></tr>
+                <tr><th>Symbol</th><td class="mono">HEART</td></tr>
+                <tr><th>Decimals</th><td>18</td></tr>
+                <tr><th>Total Supply</th><td>1,000,000.000000000000000000</td></tr>
+                <tr><th>Contract</th><td class="mono">0x6fA2...C8b9</td></tr>
+                <tr><th>Network</th><td>Ethereum (ERC‑20)</td></tr>
+                <tr><th>Owner</th><td class="mono">0x9b1E...77a4</td></tr>
+                <tr><th>Created At</th><td>2025‑09‑05 02:05 IST</td></tr>
+                <tr><th>Last Updated</th><td>2025‑09‑05 02:10 IST</td></tr>
+                <tr><th>Description</th><td>Access and membership token for the story collection.</td></tr>
+                <tr>
+                  <th>Metadata</th>
+                  <td><div class="mono">{ "tier":"gold","author":"Aisha & Aarav","use":"reading-pass","expires":"2026-12-31" }</div></td>
+                </tr>
+              </table>
+
+              <div class="divider"></div>
+
+              <h4 style="margin:12px 0 8px">Recent Events</h4>
+              <table class="tbl">
+                <thead><tr><th>Date/Time</th><th>Event</th><th>User</th><th>Notes</th></tr></thead>
+                <tbody id="history">
+                  <tr><td>2025‑09‑05 02:05</td><td>Created</td><td>system</td><td>Initial creation</td></tr>
+                  <tr><td>2025‑09‑05 02:08</td><td>Validation</td><td>ops_user</td><td>Checks passed</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Side actions -->
+          <aside class="card">
+            <div class="hd">
+              <h3 style="margin:0 0 8px">Actions</h3>
+              <p class="muted" style="margin:0">Moderate or export token.</p>
+            </div>
+            <div class="bd">
+              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px">
+                <button class="btn success" id="qaApprove">Approve</button>
+                <button class="btn warn" id="qaHold">Put On Hold</button>
+                <button class="btn danger" id="qaRevoke">Revoke</button>
+              </div>
+              <div class="divider"></div>
+              <p class="muted">Exports</p>
+              <div style="display:flex; gap:8px; flex-wrap:wrap">
+                <button class="btn" id="exportJson">Export JSON</button>
+                <button class="btn" id="exportCsv">Export CSV</button>
+                <button class="btn" id="printBtn">Print</button>
+              </div>
+              <div class="divider"></div>
+              <p class="muted">Tags</p>
+              <div style="display:flex; gap:8px; flex-wrap:wrap">
+                <span class="badge success">verified</span>
+                <span class="badge warn">review</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const statusBadge = document.getElementById('statusBadge');
+    const history = document.getElementById('history');
+
+    function addHistory(event, user, notes){
+      const tr = document.createElement('tr');
+      const now = new Date().toISOString().slice(0,16).replace('T',' ');
+      tr.innerHTML = `<td>${now}</td><td>${event}</td><td>${user}</td><td>${notes}</td>`;
+      history.prepend(tr);
+    }
+    function setBadge(state){
+      statusBadge.className = 'badge ' + state.className;
+      statusBadge.textContent = state.text;
+    }
+
+    document.getElementById('approveBtn').onclick = () => { setBadge({className:'success', text:'Active'}); addHistory('Approved','admin','Marked active'); };
+    document.getElementById('rejectBtn').onclick = () => { setBadge({className:'danger', text:'Rejected'}); addHistory('Rejected','admin','Rejected by moderator'); };
+    document.getElementById('qaApprove').onclick = () => { setBadge({className:'success', text:'Active'}); addHistory('Approved','admin','Quick action approve'); };
+    document.getElementById('qaHold').onclick = () => { setBadge({className:'warn', text:'On Hold'}); addHistory('On Hold','admin','Temporarily on hold'); };
+    document.getElementById('qaRevoke').onclick = () => { setBadge({className:'danger', text:'Revoked'}); addHistory('Revoked','admin','Access revoked'); };
+
+    // Export demo
+    const tokenData = {
+      id: document.getElementById('tokenId').textContent,
+      status: statusBadge.textContent,
+      name: 'Promise Token',
+      symbol: 'HEART',
+      decimals: 18,
+      totalSupply: '1000000.000000000000000000',
+      contract: '0x6fA2...C8b9',
+      network: 'Ethereum',
+      owner: '0x9b1E...77a4',
+      description: 'Access and membership token for the story collection.'
+    };
+
+    function download(filename, text){
+      const a = document.createElement('a');
+      a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+      a.download = filename;
+      a.click();
+    }
+    document.getElementById('exportJson').onclick = () => download('token.json', JSON.stringify(tokenData, null, 2));
+    document.getElementById('exportCsv').onclick = () => {
+      const csv = Object.entries(tokenData).map(([k,v]) => `${k},${String(v).replaceAll(',', ';')}`).join('\n');
+      download('token.csv', csv);
+    };
+    document.getElementById('printBtn').onclick = () => window.print();
+  </script>
+</body>
+</html>
