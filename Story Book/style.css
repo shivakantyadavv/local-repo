@@ -1,0 +1,94 @@
+:root{
+  --bg:#0f1020;
+  --ink:#f7f5ff;
+  --muted:#c8c4e3;
+  --accent:#f3a6b5;
+  --accent-2:#8ec5ff;
+  --card:#1a1b34;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box}
+html {scroll-behavior:smooth}
+body{
+  margin:0;
+  font: 16px/1.7 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+  color:var(--ink);
+  background: radial-gradient(1200px 800px at 20% -10%, #241b45 0%, var(--bg) 60%) fixed;
+}
+
+.hero{
+  min-height: 90svh;
+  display:grid;
+  place-items:center;
+  padding: 80px 20px 40px;
+  background:
+    radial-gradient(800px 500px at 80% -20%, rgba(142,197,255,.2), transparent 60%),
+    radial-gradient(700px 500px at 0% 120%, rgba(243,166,181,.18), transparent 60%);
+}
+.hero-inner{
+  text-align:center;
+  max-width: 900px;
+}
+h1{
+  font-size: clamp(2.2rem, 4vw + 1rem, 4rem);
+  margin: 0 0 10px;
+  letter-spacing:.5px;
+}
+.subtitle{
+  margin:0 0 24px;
+  color:var(--muted);
+  font-size:1.1rem;
+}
+.chapters{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+  margin: 8px 0 22px;
+}
+.chapters a{
+  display:inline-block;
+  padding:8px 12px;
+  border:1px solid rgba(200,196,227,.25);
+  border-radius:999px;
+  color:var(--ink);
+  text-decoration:none;
+  background: rgba(26,27,52,.45);
+  backdrop-filter: blur(6px);
+  transition:.2s ease;
+}
+.chapters a:hover{ transform: translateY(-2px); border-color: rgba(243,166,181,.7)}
+
+.cta{
+  display:inline-block;
+  padding:12px 18px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color:#1a1b34;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:700;
+  box-shadow: var(--shadow);
+}
+
+main{ padding: 30px 16px 80px; max-width: 900px; margin: 0 auto;}
+.chapter{
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.0));
+  border:1px solid rgba(200,196,227,.15);
+  border-radius:16px;
+  padding: 24px 20px;
+  margin: 18px 0;
+  box-shadow: var(--shadow);
+}
+.chapter h2{ margin-top:0; letter-spacing:.3px }
+.chapter p{ color: var(--muted) }
+.next{
+  display:inline-block; margin-top:12px; text-decoration:none; color: var(--accent-2); font-weight:600;
+}
+.end-actions{ margin-top:16px }
+
+footer{
+  text-align:center;
+  padding:30px 16px 60px;
+  color: var(--muted);
+}
